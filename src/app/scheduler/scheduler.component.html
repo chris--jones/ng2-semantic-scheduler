@@ -1,0 +1,32 @@
+<table class="scheduler ui celled table">
+  <thead>
+    <tr>
+      <th></th>
+      <th *ngFor="let day of days">
+        {{day.label}}
+      </th>
+  </tr></thead>
+  <tbody>
+    <tr *ngIf="showAllDay" class="grey">
+      <td>All Day</td>
+      <td *ngFor="let day of days">
+        <div *ngFor="let event of eventsLookup[day.number+'_all']" class="event.colour">
+        </div>
+      </td>
+    </tr>
+    <ng-template ngFor let-hour [ngForOf]="hours">
+    <tr>
+      <td class="day" rowspan="2">{{hour}}:00</td>
+      <td *ngFor="let day of days" (click)="slotClick(day.number, hour)" (drop)="eventDrop($event)" (dragover)="allowDrop($event, day.number, hour)">
+        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="event.height" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)" (dragend)="eventDragEnd($event, event)">
+          {{event.title}}
+        </div>
+      </td>
+    </tr>
+    <tr class="half-hour">
+      <td *ngFor="let day of days" (click)="slotClick(day.number, hour+0.5)" (drop)="eventDrop($event)" (dragover)="allowDrop($event, day.number, hour+0.5)">
+      </td>
+    </tr>
+    </ng-template>
+  </tbody>
+</table>
