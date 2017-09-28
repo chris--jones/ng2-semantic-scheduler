@@ -22,7 +22,7 @@
     <tr #parent>
       <td class="day" rowspan="2">{{hour}}:00</td>
       <td *ngFor="let day of days" (click)="slotClick($event, day.number, hour)" (dblclick)="slotDoubleClick($event, day.number, hour)" (drop)="eventDrop($event, day.number, hour)" (dragover)="allowDrop($event, day.number, hour)">
-        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="(parent.getBoundingClientRect().height*2*event.duration)+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
+        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="(getCellHeight(parent)*2*event.duration)+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
           <i *ngIf="removeButtons" class="remove icon" (click)="eventRemoveClick($event, event)"></i>
           <span class="resizer top"></span>
           <span class="title">{{event.title}}</span>

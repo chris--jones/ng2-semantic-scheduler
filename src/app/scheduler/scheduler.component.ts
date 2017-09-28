@@ -46,12 +46,13 @@ export class SchedulerComponent implements OnInit, OnChanges {
   @Output() onEventDragHover = new EventEmitter();
   @Output() onEventDragEnd = new EventEmitter();
   // private members
-  hours: number[] = [];
-  days: DayOfWeek[] = [];
-  eventsLookup: any = {};
-  dragEvent: ScheduledEvent;
-  dragDate: Date;
-  removeButtons: boolean = false;
+  private hours: number[] = [];
+  private days: DayOfWeek[] = [];
+  private cellHeight:number;
+  private eventsLookup: any = {};
+  private dragEvent: ScheduledEvent;
+  private dragDate: Date;
+  private removeButtons: boolean = true;
 
   ngOnInit() {
     if (!this.startDate) this.startDate = new Date();
@@ -67,19 +68,24 @@ export class SchedulerComponent implements OnInit, OnChanges {
       prefix = DayPrefix(date);
       this.days.push({number:date, label:`${day} ${date}${prefix}`});
     }
-    this.events.forEach(event => {
-      let key = event.startDate.getDate() + '_' + (event.allDay ? 'allday' : event.startDate.getHours()),
-      duration = event.allDay ? 0 : (event.endDate.getTime()-event.startDate.getTime())/1000/60/60,
-      entry = Object.assign({}, event, {duration});
-      if (!this.eventsLookup[key]) this.eventsLookup[key] = [entry];
-      else this.eventsLookup[key].push(entry);
-    });
-    setTimeout(()=>{this.removeButtons = true},1);
   }
 
-  ngOnChanges(changes:{ [x: string]: SimpleChange }) {
-    console.log(this.events);
-    //this.events = changes['events'].currentValue;
+  ngOnChanges(changes:{[x:string]: SimpleChange}) {
+    if (changes['events']) {
+      this.eventsLookup = {};
+      this.events.forEach(event => {
+        let key = event.startDate.getDate() + '_' + (event.allDay ? 'allday' : event.startDate.getHours()),
+        duration = event.allDay ? 0 : (event.endDate.getTime()-event.startDate.getTime())/1000/60/60,
+        entry = Object.assign({}, event, {duration});
+        if (!this.eventsLookup[key]) this.eventsLookup[key] = [entry];
+        else this.eventsLookup[key].push(entry);
+      });
+    }
+  }
+
+  getCellHeight(tr: any) {
+    if (!this.cellHeight) setTimeout(()=>this.cellHeight = tr.getBoundingClientRect().height, 0);
+    return this.cellHeight;
   }
 
   getSlotDate(date:number, hour?:number) {
