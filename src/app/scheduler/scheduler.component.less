@@ -25,5 +25,39 @@ table.scheduler {
     left: 0;
     right: 0;
     bottom: 0;
+    padding-top: 1em;
+    &:hover {
+      .resizer.top {
+        border-top-color: rgba(255, 255, 255, 0.6);
+      }
+      .resizer.bottom {
+        border-bottom-color: rgba(255, 255, 255, 0.6);
+      }
+      .remove {
+        display: block;
+      }
+    }
+    .resizer {
+      position: absolute;
+      cursor: ns-resize;
+      display: block;
+      left: 40%;
+      right: 40%;
+      height: 0.3em;
+      border: 1px solid transparent;
+      &.top {
+        top: 0.3em;
+      }
+      &.bottom {
+        bottom: 0.3em;
+      }
+    }
+    .remove {
+      position: absolute;
+      display: none;
+      margin: 0;
+      top: 0.3em;
+      right: 0.3em;
+    }
   }
 }
