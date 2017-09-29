@@ -1,7 +1,29 @@
 <main>
   <h1>ng2-semantic-scheduler</h1>
   <h3>Scheduler Example</h3>
+  <form class="ui form">
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="showAllDay" type="checkbox" name="showAllDay" [(ngModel)]=showAllDay>
+        <label for="showAllDay">Show all day</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="allowRemove" type="checkbox" name="allowRemove" [(ngModel)]=allowRemove>
+        <label for="allowRemove">Allow removing items</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="dropFunction" type="checkbox" name="dropFunction" [(ngModel)]=dropFunction>
+        <label for="dropFunction">Example drop restriction (only allow drop after 12pm)</label>
+      </div>
+    </div>
+  </form>
+  <br />
   <div class="ui form">
-    <sui-scheduler [events]="events" startDate="2017-09-24" [allowDrop]="allowDrop" (onEventRemove)="removeEvent($event)"></sui-scheduler>
+    <sui-scheduler [events]="events" startDate="2017-09-24" [showAllDay]="showAllDay" [allowDrop]="allowDrop"
+    [removeButtons]="allowRemove" (onEventRemove)="removeEvent($event)" (onEventDragEnd)="moveEvent($event)"></sui-scheduler>
   </div>
 </main>

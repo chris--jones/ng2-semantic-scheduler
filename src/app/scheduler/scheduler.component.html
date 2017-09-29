@@ -7,7 +7,7 @@
       </th>
   </tr></thead>
   <tbody>
-    <tr *ngIf="showAllDay" class="grey">
+    <tr *ngIf="showAllDay" class="all-day">
       <td>All Day</td>
       <td class="allDay" *ngFor="let day of days" (click)="slotClick($event, day.number)" (dblclick)="slotDoubleClick($event, day.number)" (drop)="eventDrop($event, day.number)" (dragover)="allowDrop($event, day.number)">
         <div *ngFor="let event of eventsLookup[day.number+'_allday']" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
@@ -22,7 +22,7 @@
     <tr>
       <td class="day" rowspan="2">{{hour}}:00</td>
       <td *ngFor="let day of days" (click)="slotClick($event, day.number, hour)" (dblclick)="slotDoubleClick($event, day.number, hour)" (drop)="eventDrop($event, day.number, hour)" (dragover)="eventDragOver($event, day.number, hour)">
-        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="((22*2*event.duration))+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
+        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.top]="(event.startDate.getMinutes()/30*cellHeight)+'px'" [style.height]="((cellHeight*2*event.duration))+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
           <i *ngIf="removeButtons" class="remove icon" (click)="eventRemoveClick($event, event)"></i>
           <span *ngIf="resizeHandles" class="resizer top"></span>
           <span class="title">{{event.title}}</span>

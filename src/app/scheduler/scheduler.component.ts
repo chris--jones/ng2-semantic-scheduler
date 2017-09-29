@@ -38,6 +38,7 @@ export class SchedulerComponent implements OnInit, OnChanges {
   @Input() defaultEventColour: string = 'blue';
   @Input() allowDrop: (event:ScheduledEvent, date:number, hour:number, fullDate:Date) => boolean;
   @Input() disabled: boolean = false;
+  @Input() removeButtons: boolean = true;
   @Output() onSlotClick = new EventEmitter();
   @Output() onSlotDoubleClick = new EventEmitter();
   @Output() onEventClick = new EventEmitter();
@@ -48,13 +49,12 @@ export class SchedulerComponent implements OnInit, OnChanges {
   // private members
   private hours: number[] = [];
   private days: DayOfWeek[] = [];
-  private cellHeight:number;
   private eventsLookup: any = {};
   private dragEvent: ScheduledEvent;
   private dragDate: Date;
-  private removeButtons: boolean = true;
   private resizeHandles: boolean = false;
   private lastAllowDrop:{date:number, hour?:number, allowed:boolean};
+  private cellHeight: number = 22;
 
   ngOnInit() {
     if (!this.startDate) this.startDate = new Date();
@@ -83,11 +83,6 @@ export class SchedulerComponent implements OnInit, OnChanges {
         else this.eventsLookup[key].push(entry);
       });
     }
-  }
-
-  getCellHeight(tr: any) {
-    if (!this.cellHeight) setTimeout(()=>this.cellHeight = tr.getBoundingClientRect().height, 0);
-    return this.cellHeight;
   }
 
   getSlotDate(date:number, hour?:number) {
@@ -127,6 +122,12 @@ export class SchedulerComponent implements OnInit, OnChanges {
     event.preventDefault();
     let fullDate = this.getSlotDate(date, hour);
     this.dragDate = fullDate;
+    if (event.target.nodeName !=='TD') {
+      let hours = Math.floor(event.offsetY/this.cellHeight/2),
+      mins = Math.floor((event.offsetY/this.cellHeight/2)%1*2)*30;
+      this.dragDate.setHours(this.dragDate.getHours()+hours);
+      this.dragDate.setMinutes(this.dragDate.getMinutes()+mins);
+    }
     this.onEventDragEnd.emit({event: this.dragEvent, date, hour, fullDate, originalEvent:event});
     this.dragEvent = null;
   }

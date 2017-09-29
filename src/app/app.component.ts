@@ -12,6 +12,9 @@ const ComponentStyle = require('!raw-loader!less-loader!./app.component.less');
 export class AppComponent {
   date: Date;
   events: ScheduledEvent[];
+  showAllDay: boolean = true;
+  allowRemove: boolean = true;
+  dropFunction: boolean = false;
 
   constructor(){
     if (!this.date) this.date = new Date();
@@ -68,10 +71,18 @@ export class AppComponent {
   }
 
   allowDrop = (event:ScheduledEvent, date:number, hour:number) => {
-    return hour>12;
+    return !this.dropFunction || hour>12;
   }
 
   removeEvent = ({event}:any) => {
     this.events = this.events.filter(e => e.id != event.id);
+  }
+
+  moveEvent = ({event, fullDate}:any) => {
+    let duration = (event.endDate.getTime()-event.startDate.getTime());
+    this.events = this.events.map(e => e.id == event.id ? Object.assign({},e,{
+      startDate: fullDate,
+      endDate: new Date(fullDate.getTime()+duration)
+    }) : e);
   }
 }
