@@ -13,8 +13,18 @@
 }
 
 table.scheduler {
+  border-collapse: collapse;
+
+  tr, td {
+    height: 22px;
+  }
+  
   td {
-    position:relative;
+    position: relative;
+    padding: 0 .78571429em;
+    &.allDay {
+      height: 46px;
+    }
   }
 
   div.event {

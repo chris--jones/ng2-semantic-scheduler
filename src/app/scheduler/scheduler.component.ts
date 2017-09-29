@@ -36,7 +36,7 @@ export class SchedulerComponent implements OnInit, OnChanges {
   @Input() endHour: number = 18;
   @Input() showAllDay: boolean = true;
   @Input() defaultEventColour: string = 'blue';
-  @Input() allowDropFunction: (event:ScheduledEvent, date:number, hour:number, fullDate:Date) => boolean;
+  @Input() allowDrop: (event:ScheduledEvent, date:number, hour:number, fullDate:Date) => boolean;
   @Input() disabled: boolean = false;
   @Output() onSlotClick = new EventEmitter();
   @Output() onSlotDoubleClick = new EventEmitter();
@@ -53,6 +53,8 @@ export class SchedulerComponent implements OnInit, OnChanges {
   private dragEvent: ScheduledEvent;
   private dragDate: Date;
   private removeButtons: boolean = true;
+  private resizeHandles: boolean = false;
+  private lastAllowDrop:{date:number, hour?:number, allowed:boolean};
 
   ngOnInit() {
     if (!this.startDate) this.startDate = new Date();
@@ -116,6 +118,7 @@ export class SchedulerComponent implements OnInit, OnChanges {
   }
 
   eventDragStart(event:any, scheduledEvent:ScheduledEvent) {
+    event.dataTransfer.setData('text', ''); // firefox fix
     this.dragEvent = scheduledEvent;
     this.onEventDragStart.emit({event: scheduledEvent, originalEvent:event});
   }
@@ -128,13 +131,15 @@ export class SchedulerComponent implements OnInit, OnChanges {
     this.dragEvent = null;
   }
 
-  allowDrop(event: any, date:number, hour?:number) {
-    // TODO: don't call this on every drag, only when date/hour change
-    let fullDate = this.getSlotDate(date, hour);
-    if (!this.allowDropFunction || this.allowDropFunction(this.dragEvent, date, hour, fullDate)) {
+  eventDragOver(event: any, date:number, hour?:number) {
+    let lastAllowDrop = (this.lastAllowDrop && this.lastAllowDrop.date === date && this.lastAllowDrop.hour === hour),
+    fullDate = this.getSlotDate(date, hour);
+    if (lastAllowDrop ? this.lastAllowDrop.allowed : (!this.allowDrop || this.allowDrop(this.dragEvent, date, hour, fullDate))) {
       event.preventDefault();
+      if (!lastAllowDrop) this.lastAllowDrop = {date,hour,allowed:true};
       return false;
     } else {
+      if (!lastAllowDrop) this.lastAllowDrop = {date,hour,allowed:false};
       return true;
     }
   }

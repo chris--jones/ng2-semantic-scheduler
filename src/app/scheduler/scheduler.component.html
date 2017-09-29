@@ -9,29 +9,29 @@
   <tbody>
     <tr *ngIf="showAllDay" class="grey">
       <td>All Day</td>
-      <td *ngFor="let day of days" (click)="slotClick($event, day.number)" (dblclick)="slotDoubleClick($event, day.number)" (drop)="eventDrop($event, day.number)" (dragover)="allowDrop($event, day.number)">
+      <td class="allDay" *ngFor="let day of days" (click)="slotClick($event, day.number)" (dblclick)="slotDoubleClick($event, day.number)" (drop)="eventDrop($event, day.number)" (dragover)="allowDrop($event, day.number)">
         <div *ngFor="let event of eventsLookup[day.number+'_allday']" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
           <i *ngIf="removeButtons" class="remove icon" (click)="eventRemoveClick($event, event)"></i>
-          <span class="resizer top"></span>
+          <span *ngIf="resizeHandles" class="resizer top"></span>
           <span class="title">{{event.title}}</span>
-          <span class="resizer bottom"></span>
+          <span *ngIf="resizeHandles" class="resizer bottom"></span>
         </div>
       </td>
     </tr>
     <ng-template ngFor let-hour [ngForOf]="hours">
-    <tr #parent>
+    <tr>
       <td class="day" rowspan="2">{{hour}}:00</td>
-      <td *ngFor="let day of days" (click)="slotClick($event, day.number, hour)" (dblclick)="slotDoubleClick($event, day.number, hour)" (drop)="eventDrop($event, day.number, hour)" (dragover)="allowDrop($event, day.number, hour)">
-        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="(getCellHeight(parent)*2*event.duration)+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
+      <td *ngFor="let day of days" (click)="slotClick($event, day.number, hour)" (dblclick)="slotDoubleClick($event, day.number, hour)" (drop)="eventDrop($event, day.number, hour)" (dragover)="eventDragOver($event, day.number, hour)">
+        <div *ngFor="let event of eventsLookup[day.number+'_'+hour]" [style.height]="((22*2*event.duration))+'px'" [class]="'mini ui button event '+(event.colour||defaultEventColour)" (click)="eventClick($event, event)" draggable="true" (dragstart)="eventDragStart($event, event)">
           <i *ngIf="removeButtons" class="remove icon" (click)="eventRemoveClick($event, event)"></i>
-          <span class="resizer top"></span>
+          <span *ngIf="resizeHandles" class="resizer top"></span>
           <span class="title">{{event.title}}</span>
-          <span class="resizer bottom"></span>
+          <span *ngIf="resizeHandles" class="resizer bottom"></span>
         </div>
       </td>
     </tr>
     <tr class="half-hour">
-      <td *ngFor="let day of days" (click)="slotClick(day.number, hour+0.5)" (dblclick)="slotDoubleClick(day.number, hour)" (drop)="eventDrop($event, day.number, hour+0.5)" (dragover)="allowDrop($event, day.number, hour+0.5)">
+      <td *ngFor="let day of days" (click)="slotClick(day.number, hour+0.5)" (dblclick)="slotDoubleClick(day.number, hour)" (drop)="eventDrop($event, day.number, hour+0.5)" (dragover)="eventDragOver($event, day.number, hour+0.5)">
       </td>
     </tr>
     </ng-template>

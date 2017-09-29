@@ -68,7 +68,7 @@ export class AppComponent {
   }
 
   allowDrop = (event:ScheduledEvent, date:number, hour:number) => {
-    return (date%2==1 && hour%2==1);
+    return hour>12;
   }
 
   removeEvent = ({event}:any) => {
