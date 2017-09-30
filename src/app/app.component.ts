@@ -23,6 +23,7 @@ export class AppComponent {
         id: 1,
         title: "Gerard's Birthday",
         startDate : new Date(2019,10,27,8,0,0),
+        endDate : new Date(2019,10,27,9,0,0),
         allDay: true,
         colour: 'red'
       },
@@ -64,7 +65,7 @@ export class AppComponent {
         id: 7,
         title: 'D',
         startDate : new Date(2019,10,28,6,0,0),
-        endDate : new Date(2019,10,28,18,0,0),
+        endDate : new Date(2019,10,28,10,0,0),
         colour: 'teal'
       }
     ]
@@ -78,11 +79,12 @@ export class AppComponent {
     this.events = this.events.filter(e => e.id != event.id);
   }
 
-  moveEvent = ({event, fullDate}:any) => {
+  moveEvent = ({event, fullDate, allDay}:any) => {
     let duration = (event.endDate.getTime()-event.startDate.getTime());
     this.events = this.events.map(e => e.id == event.id ? Object.assign({},e,{
       startDate: fullDate,
-      endDate: new Date(fullDate.getTime()+duration)
+      endDate: new Date(fullDate.getTime()+duration),
+      allDay
     }) : e);
   }
 }

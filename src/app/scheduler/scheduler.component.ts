@@ -51,7 +51,6 @@ export class SchedulerComponent implements OnInit, OnChanges {
   private days: DayOfWeek[] = [];
   private eventsLookup: any = {};
   private dragEvent: ScheduledEvent;
-  private dragDate: Date;
   private resizeHandles: boolean = false;
   private lastAllowDrop:{date:number, hour?:number, allowed:boolean};
   private cellHeight: number = 22;
@@ -92,6 +91,8 @@ export class SchedulerComponent implements OnInit, OnChanges {
     return slotDate;
   }
 
+  getSlotMinuteOffset = (offsetY: number) => Math.floor(offsetY/this.cellHeight)*30;
+
   slotClick(date:number, hour?:number) {
     let fullDate = this.getSlotDate(date, hour);
     this.onSlotClick.emit({date,hour,fullDate, originalEvent:event});
@@ -113,22 +114,32 @@ export class SchedulerComponent implements OnInit, OnChanges {
   }
 
   eventDragStart(event:any, scheduledEvent:ScheduledEvent) {
-    event.dataTransfer.setData('text', ''); // firefox fix
+    event.dataTransfer.setData('minuteOffset', this.getSlotMinuteOffset(event.offsetY));
     this.dragEvent = scheduledEvent;
     this.onEventDragStart.emit({event: scheduledEvent, originalEvent:event});
   }
 
   eventDrop(event: any, date:number, hour?:number) {
     event.preventDefault();
-    let fullDate = this.getSlotDate(date, hour);
-    this.dragDate = fullDate;
-    if (event.target.nodeName !=='TD') {
-      let hours = Math.floor(event.offsetY/this.cellHeight/2),
-      mins = Math.floor((event.offsetY/this.cellHeight/2)%1*2)*30;
-      this.dragDate.setHours(this.dragDate.getHours()+hours);
-      this.dragDate.setMinutes(this.dragDate.getMinutes()+mins);
+    let fullDate = this.getSlotDate(date, hour),
+    allDay = typeof(hour)==='undefined',
+    minuteOffset = event.dataTransfer.getData('minuteOffset');
+    if (event.target.nodeName !== 'TD') {
+      let durationDrag = this.getSlotMinuteOffset(event.offsetY)-minuteOffset,
+      hours = Math.floor(durationDrag/60),
+      mins = durationDrag%60;
+      if (fullDate.getHours()+hours+(fullDate.getMinutes()+mins)/60 > this.startHour)
+      {
+        fullDate.setHours(fullDate.getHours()+hours);
+        fullDate.setMinutes(fullDate.getMinutes()+mins);
+      }
+    } else {
+      let hours = Math.floor(minuteOffset/60),
+      mins = minuteOffset%60;
+      fullDate.setHours(fullDate.getHours()-hours);
+      fullDate.setMinutes(fullDate.getMinutes()-mins);
     }
-    this.onEventDragEnd.emit({event: this.dragEvent, date, hour, fullDate, originalEvent:event});
+    this.onEventDragEnd.emit({event: this.dragEvent, date, hour, fullDate, allDay, originalEvent:event});
     this.dragEvent = null;
   }
 
