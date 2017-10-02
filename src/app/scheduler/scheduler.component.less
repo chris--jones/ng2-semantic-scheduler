@@ -1,3 +1,5 @@
+@cellHeight: 22px;
+
 .day {
   font-weight: bold;
 }
@@ -16,14 +18,14 @@ table.scheduler {
   border-collapse: collapse;
 
   tr, td {
-    height: 22px;
+    height: @cellHeight;
   }
 
   td {
     position: relative;
     padding: 0 .78571429em;
     &.allDay {
-      height: 46px;
+      height: @cellHeight*2;
     }
   }
 
