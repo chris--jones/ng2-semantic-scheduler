@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import '../assets/css/styles.less';
-import { ScheduledEvent } from './scheduler/scheduler.component';
+import { DaysOfWeek, SchedulerItem } from './scheduler/scheduler.component';
 const ComponentStyle = require('!raw-loader!less-loader!./app.component.less');
 
 @Component({
@@ -11,14 +11,17 @@ const ComponentStyle = require('!raw-loader!less-loader!./app.component.less');
 
 export class AppComponent {
   date: Date;
-  events: ScheduledEvent[];
+  items: SchedulerItem[];
   showAllDay: boolean = true;
   allowRemove: boolean = true;
   dropFunction: boolean = false;
+  days: number[] = [0,1,2,3,4,5,6];
+  selectedDays: number[] = this.days.slice();
+  daysOfWeek: string[] = DaysOfWeek.slice();
 
   constructor(){
     if (!this.date) this.date = new Date();
-    this.events = [
+    this.items = [
       {
         id: 1,
         title: "Gerard's Birthday",
@@ -71,20 +74,25 @@ export class AppComponent {
     ]
   }
 
-  allowDrop = (event:ScheduledEvent, date:number, hour:number) => {
+  allowDrop = (item:SchedulerItem, date:number, hour:number) => {
     return !this.dropFunction || hour>12;
   }
 
-  removeEvent = ({event}:any) => {
-    this.events = this.events.filter(e => e.id != event.id);
+  removeItem = ({item}:any) => {
+    this.items = this.items.filter(i => i.id != item.id);
   }
 
-  moveEvent = ({event, fullDate, allDay}:any) => {
-    let duration = (event.endDate.getTime()-event.startDate.getTime());
-    this.events = this.events.map(e => e.id == event.id ? Object.assign({},e,{
+  moveItem = ({item, fullDate, allDay}:any) => {
+    let duration = (item.endDate.getTime()-item.startDate.getTime());
+    this.items = this.items.map(i => i.id == item.id ? Object.assign({},i,{
       startDate: fullDate,
       endDate: new Date(fullDate.getTime()+duration),
       allDay
-    }) : e);
+    }) : i);
+  }
+
+  toggleDay = (event:any, value:number) => {
+    if (!event.target.checked) this.selectedDays = this.selectedDays.filter(day => day !== value);
+    else if (!~this.selectedDays.indexOf(value)) this.selectedDays = this.selectedDays.concat(value);
   }
 }
