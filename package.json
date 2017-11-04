@@ -1,0 +1,53 @@
+{
+  "name": "ng2-semantic-scheduler",
+  "version": "1.0.0",
+  "description": "A scheduler for use with ng2-semantic-ui",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --inline --progress --port 8080",
+    "test": "karma start",
+    "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail"
+  },
+  "author": "chris--jones",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/common": "~4.4.0",
+    "@angular/compiler": "~4.4.0",
+    "@angular/core": "~4.4.0",
+    "@angular/forms": "~4.4.0",
+    "@angular/http": "~4.4.0",
+    "@angular/platform-browser": "~4.4.0",
+    "@angular/platform-browser-dynamic": "~4.4.0",
+    "@angular/router": "~4.4.0",
+    "core-js": "^2.5.1",
+    "rxjs": "^5.0.1",
+    "zone.js": "^0.8.17"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.36",
+    "@types/node": "^6.0.88",
+    "angular2-template-loader": "^0.6.2",
+    "awesome-typescript-loader": "^3.2.3",
+    "css-loader": "^0.26.4",
+    "extract-text-webpack-plugin": "^2.0.0-beta.5",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.5",
+    "html-webpack-plugin": "^2.30.1",
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^2.0.4",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
+    "null-loader": "^0.1.1",
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.2",
+    "style-loader": "^0.13.2",
+    "typescript": "^2.3.4",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1",
+    "webpack-merge": "^3.0.0"
+  }
+}

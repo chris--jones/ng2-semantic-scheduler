@@ -1,0 +1,76 @@
+@cellHeight: 22px;
+
+.day {
+  font-weight: bold;
+}
+
+.ui.celled.table {
+  tr td:first-child, tr th:first-child {
+    border-left: 1px solid rgba(34,36,38,.1);
+  }
+
+  tr.half-hour td {
+    border-top-style: dotted;
+  }
+}
+
+table.scheduler {
+  border-collapse: collapse;
+
+  tr, td {
+    height: @cellHeight;
+  }
+
+  td {
+    position: relative;
+    padding: 0 .78571429em;
+    &.allDay {
+      height: @cellHeight*2;
+    }
+  }
+
+  div.item {
+    position: absolute;
+    height: 100%;
+    margin: 0;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: 1em;
+    &:hover {
+      .resizer.top {
+        border-top-color: rgba(255, 255, 255, 0.6);
+      }
+      .resizer.bottom {
+        border-bottom-color: rgba(255, 255, 255, 0.6);
+      }
+      .remove {
+        display: block;
+      }
+    }
+    .resizer {
+      position: absolute;
+      cursor: ns-resize;
+      display: block;
+      left: 40%;
+      right: 40%;
+      height: 0.3em;
+      border: 1px solid transparent;
+      &.top {
+        top: 0.3em;
+      }
+      &.bottom {
+        bottom: 0.3em;
+      }
+    }
+    .remove {
+      position: absolute;
+      display: none;
+      margin: 0;
+      top: 0.3em;
+      right: 0.3em;
+    }
+  }
+}

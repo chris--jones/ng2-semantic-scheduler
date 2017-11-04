@@ -1,0 +1,39 @@
+<table class="scheduler ui celled table">
+  <thead>
+    <tr>
+      <th></th>
+      <th *ngFor="let day of daysOfWeek">
+        {{day.label}}
+      </th>
+  </tr></thead>
+  <tbody>
+    <tr *ngIf="showAllDay" class="all-day">
+      <td>All Day</td>
+      <td class="allDay" *ngFor="let day of daysOfWeek" (click)="slotClick($event, day.number)" (dblclick)="slotDoubleClick($event, day.number)" (drop)="itemDrop($event, day.number)" (dragover)="itemDragOver($event, day.number)">
+        <div *ngFor="let item of itemLookup[day.number+'_allday']" [class]="'mini ui button item '+(item.colour||defaultItemColour)" (click)="itemClick($event, item)" draggable="true" (dragstart)="itemDragStart($event, item)">
+          <i *ngIf="removeButtons" class="remove icon" (click)="itemRemoveClick($event, item)"></i>
+          <span *ngIf="resizeHandles" class="resizer top"></span>
+          <span class="title">{{item.title}}</span>
+          <span *ngIf="resizeHandles" class="resizer bottom"></span>
+        </div>
+      </td>
+    </tr>
+    <ng-template ngFor let-hour [ngForOf]="hours">
+    <tr>
+      <td class="day" rowspan="2">{{hour}}:00</td>
+      <td *ngFor="let day of daysOfWeek" (click)="slotClick($event, day.number, hour)" (dblclick)="slotDoubleClick($event, day.number, hour)" (mouseover)="slotHoverStart($event, day.number, hour)" (mouseout)="slotHoverEnd($event, day.number, hour)" (drop)="itemDrop($event, day.number, hour)" (dragover)="itemDragOver($event, day.number, hour)">
+        <div *ngFor="let item of itemLookup[day.number+'_'+hour]" [style.top]="(item.startDate.getMinutes()/30*cellHeight)+'px'" [style.height]="((cellHeight*2*item.duration))+'px'" [class]="'mini ui button item '+(item.colour||defaultItemColour)" (click)="itemClick($event, item)" draggable="true" (dragstart)="itemDragStart($event, item)">
+          <i *ngIf="removeButtons" class="remove icon" (click)="itemRemoveClick($event, item)"></i>
+          <span *ngIf="resizeHandles" class="resizer top" (mousedown)="itemResizeStart($event, 'top', item)"></span>
+          <span class="title">{{item.title}}</span>
+          <span *ngIf="resizeHandles" class="resizer bottom" (mousedown)="itemResizeStart($event, 'bottom', item)"></span>
+        </div>
+      </td>
+    </tr>
+    <tr class="half-hour">
+      <td *ngFor="let day of daysOfWeek" (click)="slotClick($event, day.number, hour+0.5)" (dblclick)="slotDoubleClick($event, day.number, hour+0.5)" (mouseover)="slotHoverStart($event, day.number, hour+0.5)" (mouseout)="slotHoverEnd($event, day.number, hour+0.5)" (drop)="itemDrop($event, day.number, hour+0.5)" (dragover)="itemDragOver($event, day.number, hour+0.5)">
+      </td>
+    </tr>
+    </ng-template>
+  </tbody>
+</table>

@@ -1,0 +1,38 @@
+<main>
+  <h1>ng2-semantic-scheduler</h1>
+  <h3>Scheduler Example</h3>
+  <form class="ui form">
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="showAllDay" type="checkbox" name="showAllDay" [(ngModel)]="showAllDay">
+        <label for="showAllDay">Show all day</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="allowRemove" type="checkbox" name="allowRemove" [(ngModel)]="allowRemove">
+        <label for="allowRemove">Allow removing items</label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="ui checkbox">
+        <input id="dropFunction" type="checkbox" name="dropFunction" [(ngModel)]="dropFunction">
+        <label for="dropFunction">Example drop restriction (only allow drop after 12pm)</label>
+      </div>
+    </div>
+    <div class="inline fields">
+      Days:&nbsp;
+      <div class="field" *ngFor="let day of days">
+        <div class="ui checkbox">
+          <input [id]="'day_'+days[day]" type="checkbox" name="days" [checked]="days.indexOf(day)>=0" (change)="toggleDay($event, day)">
+          <label [for]="'day_'+days[day]">{{daysOfWeek[day]}}</label>
+        </div>
+      </div>
+    </div>
+  </form>
+  <br />
+  <div class="ui form">
+    <sui-scheduler [items]="items" startDate="2017-09-24" [showAllDay]="showAllDay" [allowDrop]="allowDrop"
+    [removeButtons]="allowRemove" [days]="selectedDays" (onItemRemove)="removeItem($event)" (onItemDragEnd)="moveItem($event)"></sui-scheduler>
+  </div>
+</main>
