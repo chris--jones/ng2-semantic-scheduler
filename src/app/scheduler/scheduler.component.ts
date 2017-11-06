@@ -42,6 +42,7 @@ export class SchedulerComponent implements OnInit, OnChanges {
   @Input() removeButtons: boolean = true;
   @Output() onSlotClick = new EventEmitter();
   @Output() onSlotDoubleClick = new EventEmitter();
+  @Output() onSlotHover = new EventEmitter();
   @Output() onItemClick = new EventEmitter();
   @Output() onItemRemove = new EventEmitter();
   @Output() onItemDragStart = new EventEmitter();
@@ -51,10 +52,12 @@ export class SchedulerComponent implements OnInit, OnChanges {
   private hours: number[] = [];
   private daysOfWeek: DayOfWeek[] = [];
   private itemLookup: any = {};
-  private dragItem: SchedulerItem;
-  private resizeHandles: boolean = false;
+  private drag: any;
+  private resizeHandles: boolean = true;
   private lastAllowDrop:{date:number, hour?:number, allowed:boolean};
   private cellHeight: number = 22;
+  private slotHoverTimeout: any;
+  private slotHoverTimeoutSeconds: number = 300;
 
   ngOnInit() {
     if (this.startHour < 0) this.startHour = 0;
@@ -100,28 +103,43 @@ export class SchedulerComponent implements OnInit, OnChanges {
 
   slotClick(event:any, date:number, hour?:number) {
     let fullDate = this.getSlotDate(date, hour);
-    this.onSlotClick.emit({date,hour,fullDate, originalEvent:event});
+    this.onSlotClick.emit({date,hour,fullDate,originalEvent:event});
   }
 
   slotDoubleClick(event:any, date:number, hour?:number) {
     let fullDate = this.getSlotDate(date, hour);
-    this.onSlotDoubleClick.emit({date,hour,fullDate, originalEvent:event});
+    this.onSlotDoubleClick.emit({date,hour,fullDate,originalEvent:event});
+  }
+
+  slotHoverStart(event:any, date:number, hour?:number) {
+    this.slotHoverTimeout = setTimeout(()=>{
+      let fullDate = this.getSlotDate(date, hour);
+      this.onSlotHover.emit({date,hour,fullDate,originalEvent:event});
+    }, this.slotHoverTimeoutSeconds);
+  }
+
+  slotHoverEnd(event:any, date:number, hour?:number) {
+    clearTimeout(this.slotHoverTimeout);
   }
 
   itemClick(event:any, item:SchedulerItem) {
     event.stopPropagation();
-    this.onItemClick.emit({item, event});
+    this.onItemClick.emit({item,originalEvent:event});
   }
 
   itemRemoveClick(event:any, item:SchedulerItem) {
     event.stopPropagation();
-    this.onItemRemove.emit({item, event});
+    this.onItemRemove.emit({item,originalEvent:event});
   }
 
   itemDragStart(event:any, item:SchedulerItem) {
     event.dataTransfer.setData('minuteOffset', this.getSlotMinuteOffset(event.offsetY));
-    this.dragItem = item;
-    this.onItemDragStart.emit({item, event});
+    this.drag = { item };
+    this.onItemDragStart.emit({item,originalEvent:event});
+  }
+
+  itemResizeStart(event:any, from:'top'|'bottom', item:SchedulerItem) {
+    this.drag = { type:'resize', from, item };
   }
 
   itemDrop(event: any, date:number, hour?:number) {
@@ -144,14 +162,14 @@ export class SchedulerComponent implements OnInit, OnChanges {
       fullDate.setHours(fullDate.getHours()-hours);
       fullDate.setMinutes(fullDate.getMinutes()-mins);
     }
-    this.onItemDragEnd.emit({item: this.dragItem, date, hour, fullDate, allDay, event});
-    this.dragItem = null;
+    this.onItemDragEnd.emit({item: this.drag.item,date,hour,fullDate,allDay,originalEvent:event});
+    this.drag = null;
   }
 
   itemDragOver(event: any, date:number, hour?:number) {
     let lastAllowDrop = (this.lastAllowDrop && this.lastAllowDrop.date === date && this.lastAllowDrop.hour === hour),
     fullDate = this.getSlotDate(date, hour);
-    if (lastAllowDrop ? this.lastAllowDrop.allowed : (!this.allowDrop || this.allowDrop(this.dragItem, date, hour, fullDate))) {
+    if (lastAllowDrop ? this.lastAllowDrop.allowed : (!this.allowDrop || this.allowDrop(this.drag.item, date, hour, fullDate))) {
       event.preventDefault();
       if (!lastAllowDrop) this.lastAllowDrop = {date,hour,allowed:true};
       return false;
