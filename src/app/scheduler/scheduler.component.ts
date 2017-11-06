@@ -124,18 +124,18 @@ export class SchedulerComponent implements OnInit, OnChanges {
 
   itemClick(event:any, item:SchedulerItem) {
     event.stopPropagation();
-    this.onItemClick.emit({item, event});
+    this.onItemClick.emit({item,originalEvent:event});
   }
 
   itemRemoveClick(event:any, item:SchedulerItem) {
     event.stopPropagation();
-    this.onItemRemove.emit({item, event});
+    this.onItemRemove.emit({item,originalEvent:event});
   }
 
   itemDragStart(event:any, item:SchedulerItem) {
     event.dataTransfer.setData('minuteOffset', this.getSlotMinuteOffset(event.offsetY));
     this.drag = { item };
-    this.onItemDragStart.emit({item, event});
+    this.onItemDragStart.emit({item,originalEvent:event});
   }
 
   itemResizeStart(event:any, from:'top'|'bottom', item:SchedulerItem) {
@@ -162,7 +162,7 @@ export class SchedulerComponent implements OnInit, OnChanges {
       fullDate.setHours(fullDate.getHours()-hours);
       fullDate.setMinutes(fullDate.getMinutes()-mins);
     }
-    this.onItemDragEnd.emit({item: this.drag.item, date, hour, fullDate, allDay, event});
+    this.onItemDragEnd.emit({item: this.drag.item,date,hour,fullDate,allDay,originalEvent:event});
     this.drag = null;
   }
 
